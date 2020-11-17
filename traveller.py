@@ -120,7 +120,7 @@ def BookTicket():
     connection, cursor = ConnectDB()
     global tkt_no
     cursor.execute('''select tkt_no from booking order by tkt_no;''')
-    tkt_no = cursor.fetchone()
+    tkt_no = cursor.fetchall()[0][-1]
     if tkt_no == None:
         tkt_no = 1000000000
     else:
@@ -131,7 +131,7 @@ def BookTicket():
         buses.append(bus[0])
     bus_id = random.choice(buses)
     seat_no = random.randint(1, 60)
-    price = random.choice([300, 400, 500, 600])
+    price = random.randint(300, 601)
 
     try:
         cursor.execute('''insert into booking values('{}', '{}', '{}', '{}', '{}', '{}', {}, {}, {});'''.format(str(tkt_no), username,
@@ -171,14 +171,14 @@ def CheckStatus():
     Button(StatusPage, text='EXIT', font=('Arial Black', 10), bg='#00ff99', fg='#f0f0f0', command=ExitStatus, width=15).place(relx=0.4, rely=0.39)
 
     StatusPage.Right = ttk.Frame(StatusPage, width=width, height=10)
-    StatusPage.Right.place(relx=0.035, rely=0.7)
+    StatusPage.Right.place(relx=0, rely=0.7)
 
     global TicketDetails
 
     scrollbarx = Scrollbar(StatusPage.Right, orient=VERTICAL)
     scrollbary = Scrollbar(StatusPage.Right, orient=HORIZONTAL)
 
-    TicketDetails = ttk.Treeview(StatusPage.Right, columns=('tkt_no', 'username', 'dep_from',
+    TicketDetails = ttk.Treeview(StatusPage.Right, columns=('tkt_no', 'username', 'fname', 'lname', 'dep_from',
                                     'dep_to', 'dep_date', 'meal', 'seat_no', 'bus_id', 'price', 'status'))
     
     scrollbary.config(command=TicketDetails.yview)
@@ -188,6 +188,8 @@ def CheckStatus():
 
     TicketDetails.heading('tkt_no', text='Ticket Number', anchor=W)
     TicketDetails.heading('username', text='Username', anchor=W)
+    TicketDetails.heading('fname', text='First Name', anchor=W)
+    TicketDetails.heading('lname', text='Last Name', anchor=W)
     TicketDetails.heading('dep_from', text='Departure from', anchor=W)
     TicketDetails.heading('dep_to', text='Departure to', anchor=W)
     TicketDetails.heading('dep_date', text='Departure Date', anchor=W)
@@ -204,9 +206,11 @@ def CheckStatus():
     TicketDetails.column('#4', stretch=NO, minwidth=0, width=120)
     TicketDetails.column('#5', stretch=NO, minwidth=0, width=120)
     TicketDetails.column('#6', stretch=NO, minwidth=0, width=120)
-    TicketDetails.column('#7', stretch=NO, minwidth=0, width=120)
-    TicketDetails.column('#8', stretch=NO, minwidth=0, width=120)
-    TicketDetails.column('#9', stretch=NO, minwidth=0, width=120)
+    TicketDetails.column('#7', stretch=NO, minwidth=0, width=90)
+    TicketDetails.column('#8', stretch=NO, minwidth=0, width=90)
+    TicketDetails.column('#9', stretch=NO, minwidth=0, width=80)
+    TicketDetails.column('#10', stretch=NO, minwidth=0, width=90)
+    TicketDetails.column('#11', stretch=NO, minwidth=0, width=90)
 
     TicketDetails.pack()
 
@@ -217,8 +221,12 @@ def GetStatus():
         status = cursor.fetchone()[0]
         cursor.execute('''select * from booking where tkt_no='{}';'''.format(tkt_no.get()))
         res = cursor.fetchall()
+        cursor.execute('''select fname, lname from customer where username='{}';'''.format(res[0][1]))
+        x = cursor.fetchall()[0]
+        fname = x[0]
+        lname = x[1]
         for data in res:
-            TicketDetails.insert('', 'end', values=(data[0], data[1], data[2], data[3], data[4], data[5],
+            TicketDetails.insert('', 'end', values=(data[0], data[1], fname, lname, data[2], data[3], data[4], data[5],
                                 data[6], data[7], data[8], status))
         connection.close()
         print('Ticket details found...')
@@ -238,7 +246,7 @@ def UpdateDetails():
     UpdateDetailsPage.title('Update User Details')
     UpdateDetailsPage.config(bg='#f0f0f0')
     Frame(UpdateDetailsPage, height=70, width=width, bg='#00ff99').place(relx=0, y=0)
-    Label(UpdateDetailsPage, text='Update User Details(any 1 field at a time)', font=('impact', 30, 'bold'), bg='#00ff99').place(relx=0.4, y=15)
+    Label(UpdateDetailsPage, text='Update User Details(any 1 field at a time)', font=('impact', 30, 'bold'), bg='#00ff99').place(relx=0.26, y=15)
     
     global username
     global password

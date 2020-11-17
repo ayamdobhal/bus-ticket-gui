@@ -28,8 +28,10 @@ def AdminLoginWindow():
 
     Frame(AdminLoginPage, height=70, width=width, bg='#00ff99').place(x=0, y=0)
     Label(AdminLoginPage, font=('impact', 30, 'bold'), text = 'Admin Login', bg='#00ff99').place(relx=0.43, y=10)
+
     Label(AdminLoginPage, text='Admin', bg='#f0f0f0', font=('Arial', 20, 'bold')).place(relx=0.48, rely=0.36)
     Label(AdminLoginPage, text='Password', bg='#f0f0f0', font=('Arial', 20)).place(relx=0.35, rely=0.45)
+    
     AdminPassword = ttk.Entry(AdminLoginPage, font=('Arial', 20), show='*')
     AdminPassword.place(relx=0.45, rely=0.45)
     Button(AdminLoginPage, text ='LOGIN', font=('Arial', 20, 'bold'), bg='#00ff99', fg='#f0f0f0', command=AdminLogin).place(relx=0.46, rely=0.55)

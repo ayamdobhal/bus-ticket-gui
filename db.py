@@ -1,12 +1,21 @@
-import mysql.connector
+import pip
+try:
+    import mysql.connector
+except:
+    print('Some dependencies are not installed. Wait while they install...')
+    pip.main(['install', '--user', 'mysql-connector-python'])
+    import mysql.connector
+
 import ctypes
 import json
 
 def TableCheck(CURSOR):
-    CURSOR.execute("select * from information_schema.tables where table_name = 'customer';")
-    if CURSOR.fetchone() != None:
+    try:
+        cursor.execute("select * from customer;")
+        print(cursor.fetchall())
         return True
-    return False
+    except:
+        return False
 
 def CreateTables(CONNECTION, CURSOR):
     try:
@@ -39,6 +48,7 @@ def CreateTables(CONNECTION, CURSOR):
                     phone varchar(255) not null);'''
                 )
         CONNECTION.commit()
+        connection.close()
         print('database created succesfully!')
     except:
         print('Error')
